@@ -1,20 +1,18 @@
-// import mongoose
+const dotenv = require('dotenv')
 const mongoose = require('mongoose')
+const { error } = require('selenium-webdriver')
 
-// mongoose connect to url
-mongoose.connect(process.env.DATABASE_URL);
+dotenv.config()
 
-mongoose.connection.on("connected", () => {
-    console.log("Mongoose connected to mongoDB")
-})
+const DATABASE_URL = process.env.DATABASE_URL
 
-mongoose.connection.on("error", (error) => {
-    console.log("mongoDB Connection Error:", error)
-})
+mongoose.connect(DATABASE_URL) // connect to db 
 
-mongoose.connection.on("disconnected", () => {
-    console.log("mongoDB disconnected")
-})
+// connection messages
+mongoose.connection
+.on('open', () => {console.log("Mongo is Connected")})
+.on('close', () => {console.log("Mongo is disconnected")})
+.on('error', (error) => {console.log(error)})
 
-// export mongoose 
-module.exports = { mongoose }
+
+module.exports = mongoose;
