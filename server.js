@@ -4,6 +4,7 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const cookieParser = require('cookie-parser')
 const authRouter = require('./controllers/auth')
+const tweetRouter = require('./controllers/tweet');
 // read .env file
 dotenv.config();
 
@@ -12,7 +13,10 @@ const app = express()
 
 
 // register middleware
-app.use(cors())
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials : true,
+})) // allow external request
 app.use(morgan("dev"))
 app.use(express.json())
 app.use(cookieParser())
@@ -22,6 +26,8 @@ app.get('/test', (req,res) => {
     res.send('server is working')
 })
 app.use('/auth', authRouter)
+app.use('/tweet', tweetRouter)
+
 
 const PORT = process.env.PORT || 4444
 app.listen(PORT, () => {

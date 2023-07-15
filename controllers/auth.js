@@ -38,7 +38,14 @@ router.post('/login', async (req, res) => {
             const payload = {username}
             const token = jwt.sign(payload, process.env.SECRET)
 
-            res.cookie("token", token, {httpOnly: true}).json({payload, status: "logged in"})
+            // res.cookie("token", token, {httpOnly: true}).json({payload, status: "logged in"})
+            res.cookie("token", token, {
+                httpOnly: true,
+                path: "/",
+                secure: req.hostname === "localhost" ? false : true, //if the the host is "localhost" send insecure cookies
+            })
+            .json({payload, status: "logged in"})
+
         } else {
             res.status(400).json({error: "password does not match "})
         }
