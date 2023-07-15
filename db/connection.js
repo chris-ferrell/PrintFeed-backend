@@ -1,6 +1,6 @@
 const dotenv = require('dotenv')
 const mongoose = require('mongoose')
-const { error } = require('selenium-webdriver')
+
 
 dotenv.config()
 
