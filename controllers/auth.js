@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
     if (user){
         const passwordCheck = await bcrypt.compare(password, user.password)
         if (passwordCheck){
-            const payload = {username}
+            const payload = {username, userId: user._id}
             const token = jwt.sign(payload, process.env.SECRET)
 
             // res.cookie("token", token, {httpOnly: true}).json({payload, status: "logged in"})

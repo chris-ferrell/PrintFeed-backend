@@ -1,6 +1,7 @@
 const express = require('express');
 const Tweet = require('../models/tweet')
 const isUserLoggedIn = require('../middleware/isLoggedIn');
+const User = require('../models/user');
 
 
 
@@ -33,11 +34,23 @@ router.get('/:id', async (req, res) => {
 
 // create
 router.post('/', async (req, res) => {
+    console.log('*********** Reached create tweet route ************') // 
+    console.log(req.body)
+    console.log('payload ' , req.payload)
     try {
         const username = req.payload.username;
         req.body.username = username;
-        const note = await Tweet.create(req.body);
-        res.json(note);
+        const newTweet = req.body
+        newTweet.user = req.payload.userId
+        const tweet = await Tweet.create(newTweet);
+    
+        const user = await User.findById(req.payload.userId)
+        console.log(user)
+        user.tweets.push(tweet._id);
+        await user.save(); // saves upstream 
+
+        // res.json(tweet);
+        res.json("ok ..")
       } catch(error) {
         res.status(400).json({error: error.message})
     }
@@ -46,6 +59,7 @@ router.post('/', async (req, res) => {
 
 // update
 router.put('/:id', async (req, res) => {
+    
     try {
         const username = req.payload.username 
         req.body.username = username
@@ -67,5 +81,34 @@ router.delete('/:id', async (req, res) => {
         res.status(400).json({error})
     }
 })
+
+router.patch('/:tweetId/like', async (req, res) => {
+    console.log('*********** Reached like tweet route ************');
+    try {
+      const tweetId = req.params.tweetId;
+      const userId = req.payload.userId;
+  
+      const tweet = await Tweet.findById(tweetId);
+      if (!tweet) {
+        return res.status(404).json({ error: 'Tweet not found' });
+      }
+  
+      const likedIndex = tweet.likes.findIndex((like) => like.toString() === userId);
+      if (likedIndex !== -1) {
+        // User has already liked the tweet, remove the like
+        tweet.likes.splice(likedIndex, 1);
+      } else {
+        // User has not liked the tweet, add the like
+        tweet.likes.push(userId);
+      }
+  
+      await tweet.save();
+  
+      res.json({ message: 'Tweet like updated successfully' });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+  
 
 module.exports = router
