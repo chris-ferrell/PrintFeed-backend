@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
     
         const user = await User.findById(req.payload.userId)
         console.log(user)
-        user.tweets.push(tweet._id);
+        user.tweets.push(tweet._id); // adds to array 
         await user.save(); // saves upstream 
 
         // res.json(tweet);
@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
     }
     
 })
-
+ 
 // update
 router.put('/:id', async (req, res) => {
     
