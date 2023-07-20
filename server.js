@@ -16,6 +16,7 @@ const app = express()
 app.use(cors({
     origin: "http://localhost:3000",
     credentials : true,
+     // what the ip is allowed to do
 })) // allow external request
 app.use(morgan("dev"))
 app.use(express.json())
